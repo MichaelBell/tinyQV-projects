@@ -1,0 +1,8 @@
+*.o
+*.elf
+*.bin
+*.rbin
+*.swp
+*.hex
+*.uf2
+*.dfu
