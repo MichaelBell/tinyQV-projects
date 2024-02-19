@@ -1,4 +1,4 @@
-NAME=hello
+NAME=prime
 
 TINYQV_SDK=../../tinyQV-sdk
 
