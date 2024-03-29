@@ -1,0 +1,10 @@
+{
+    "C_Cpp.default.includePath": [
+        "/home/mdb36/riscv/tinyQV-sdk"
+    ],
+    "files.associations": {
+        "spi.h": "c",
+        "gpio.h": "c"
+    },
+    "C_Cpp.default.compilerPath": "/opt/riscv/riscv32-unknown-elf/"
+}
