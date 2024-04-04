@@ -89,8 +89,19 @@ void lcd_clear_screen(uint16_t colour)
     spi_send_data(data[1] | 0x300);
 }
 
-void lcd_draw_sprite(int x, int y, int w, uint16_t* data, int len)
+void lcd_draw_sprite(int x, int y, int w, const uint16_t* data, int len)
 {
     start_pixels(x, y, w);
     spi_send_bytes((uint8_t*)data, len*2, true, true);
+}
+
+void lcd_draw_sprite_portion(int x, int y, int sprite_w, const uint16_t* data, int offset_x, int offset_y, int w, int h)
+{
+    start_pixels(x, y, w);
+    int offset = offset_y * sprite_w + offset_x;
+    for (int i = 0; i < h; ++i)
+    {
+        spi_send_bytes((const uint8_t*)(data + offset), w*2, i == h-1, true);
+        offset += sprite_w;
+    }
 }

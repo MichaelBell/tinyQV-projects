@@ -1,5 +1,6 @@
 #include "lcd.h"
 #include <gpio.h>
+#include <csr.h>
 #include <uart.h>
 #define printf uart_printf
 
@@ -37,22 +38,11 @@ const uint16_t ball_sprite_data[] = {
 
 uint16_t sprite_buf[64];
 
-static void delay_loop(int cycles) {
-    volatile int i;
-    for (i = 0; i < cycles; ++i);
-}
-
 static void move_ball(int old_x, int old_y, int inc_x, int inc_y)
 {
-    int top_x = inc_x > 0 ? 1 : 0;
-    int top_y = inc_y > 0 ? 1 : 0;
-
-    for (int y = 0; y < 7; ++y) {
-        for (int x = 0; x < 7; ++x) {
-            sprite_buf[7 * y + x] = ball_sprite_data[8 * (y - top_y + 1) + (x - top_x + 1)];
-        }
-    }
-    lcd_draw_sprite(old_x, old_y, 7, sprite_buf, 7*7);
+    int top_x = inc_x > 0 ? 0 : 1;
+    int top_y = inc_y > 0 ? 0 : 1;
+    lcd_draw_sprite_portion(old_x, old_y, 8, ball_sprite_data, top_x, top_y, 7, 7);
 }
 
 #define BAT_Y 235
@@ -94,12 +84,12 @@ static void run_game() {
     int bat_x = 110;
     draw_bat(bat_x);
 
-    struct ball b = {.x=50<<4, .y=200<<4, .xvel=1, .yvel=-1<<2};
+    struct ball b = {.x=50<<4, .y=200<<4, .xvel=1, .yvel=-1<<3};
 
     int frame = 0;
 
     while (1) {
-        if ((++frame & 0xFFF) == 0) {
+        if ((++frame & 0x3FF) == 0) {
             if (b.yvel < 0) --b.yvel;
             if (b.yvel > 0) ++b.yvel;
         }
@@ -109,8 +99,6 @@ static void run_game() {
         }
 
         const int inputs = ~get_inputs();
-        //uart_putc('.');
-        //printf("%08x\n", inputs);
 
         const int old_ball_x = b.x >> 4;
         const int old_ball_y = b.y >> 4;
@@ -132,17 +120,20 @@ static void run_game() {
                     ++b.xvel;
                     if (b.xvel == 0) b.xvel = 1;
                 }
+                else {
+                    if (b.xvel > 0) ++b.xvel;
+                    else --b.xvel;
+                }
             }
             else break;
         }
 
         const int new_ball_y = b.y >> 4;
-        //uart_putc('.');
 
         // Call move ball even if not moved otherwise timing will chnage a lot
         move_ball(old_ball_x, old_ball_y, new_ball_x - old_ball_x, new_ball_y - old_ball_y);
 
-        if ((frame & 3) == 0) {
+        if ((frame & 1) == 0) {
             if ((inputs & 1) && bat_x > 1) {
                 move_bat(bat_x, -1);
                 bat_x--;
@@ -155,8 +146,6 @@ static void run_game() {
                 move_bat(bat_x, 0);
             }
         }
-
-        //uart_putc('.');
     }
 
     printf("Game Over\r\n");
@@ -177,11 +166,11 @@ int main(void)
     lcd_printf(10, 150, "Printf test: %d %02x", 23, 67);
     printf("Test\r\n");
 
-    delay_loop(1000);
+    delay_us(100000);
 
     while (1) {
         run_game();
-        delay_loop(500);
+        delay_us(50000);
         while ((~get_inputs() & 3) == 0);
     }
 }
