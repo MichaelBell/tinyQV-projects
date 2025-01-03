@@ -1,6 +1,6 @@
-NAME = donut
+NAME = seven
 
-PROJECT_SOURCES ?= donut2.c
+PROJECT_SOURCES ?= seven.c
 
 RISCV_TOOLCHAIN ?= /opt/tinyQV
 

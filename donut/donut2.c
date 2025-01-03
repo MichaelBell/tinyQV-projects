@@ -3,11 +3,11 @@
 // Bruno Levy: added ANSI "pseudo-graphics", and RISC-V statistics
 
 #define CPU_NAME "tinyQV TT06" // Name of your CPU and FPGA board
-#define MHZ 3                     // Frequency (without a timer we cannot guess)
+#define MHZ 8                     // Frequency (without a timer we cannot guess)
 //#define USE_MUL                    // Define if you support RV32M 
 
 // #define PRECISE // Define for a more accurate result (but it costs a bit)
-#define START_FRAMES 0 // Number of frames without display
+#define START_FRAMES 2 // Number of frames without display
                         // (for accurate CPI/MIPS measurements)
 
 #include <stdint.h>
