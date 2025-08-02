@@ -1,4 +1,4 @@
-NAME = hello
+NAME = spam
 
 PROJECT_SOURCES ?= main.c
 
@@ -24,7 +24,7 @@ clean:
 	$(AS) -march=rv32ec_zcb -mabi=ilp32e $< -o $@
 
 $(NAME).elf: $(PROJECT_SOURCES:.c=.o)
-	$(LD) $^ $(TINYQV_SDK)/start.o $(TINYQV_SDK)/tinyQV-sim.a $(RISCV_TOOLCHAIN)/riscv32-unknown-elf/lib/libc.a $(RISCV_TOOLCHAIN)/lib/gcc/riscv32-unknown-elf/*/libgcc.a  -T $(TINYQV_SDK)/memmap_sim --gc-sections -o $@
+	$(LD) $^ $(TINYQV_SDK)/start.o $(TINYQV_SDK)/tinyQV.a $(RISCV_TOOLCHAIN)/riscv32-unknown-elf/lib/libc.a $(RISCV_TOOLCHAIN)/lib/gcc/riscv32-unknown-elf/*/libgcc.a  -T $(TINYQV_SDK)/memmap --gc-sections -o $@
 
 $(NAME).bin: $(NAME).elf
 	$(OBJCOPY) $< -O binary $@
